@@ -4,6 +4,7 @@
   "description": "fullstack",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "format": "prettier --write *.js"
   },
   "repository": {
@@ -22,6 +23,7 @@
     "prettier": "^3.8.0"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "express": "^5.2.1"
   }
 }
