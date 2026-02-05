@@ -22,6 +22,11 @@ db.run(`
     )
 `);
 
+app.get('/', (req, res) => {
+    res.send('Welcome to the Book API using SQLite!');
+});
+
+
 // GET all books
 app.get('/books', (req, res) => {
     db.all('SELECT * FROM books', [], (err, rows) => {
