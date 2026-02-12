@@ -26,7 +26,15 @@ const Book = sequelize.define('Book', {
     }
 });
 
+//create the table if it doesn't exist
 sequelize.sync()
+
+app.get("/", (req, res) => {
+  res.send("Hello Book CRUD World! by Visitsak Phenongchum");
+});
+
+
+//route to get all books
 app.get ('/books',(req,res)=>{
     Book.findAll().then(books=>{
         res.json(books);
@@ -37,7 +45,7 @@ app.get ('/books',(req,res)=>{
 
 app.get('/books/:id',(req,res)=>{
     Book.findByPk(req.params.id).then(book=>{
-        if(book){
+        if(!book){
             res.status(404).send('Book not found');
         }else{
             res.json(book);
