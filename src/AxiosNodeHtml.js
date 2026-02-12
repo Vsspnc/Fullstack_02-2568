@@ -8,10 +8,11 @@ const path = require('path');
 
 
 // Serve static files
-app.set("views", path.join(__dirname, "/public/views"));
+app.set("views", path.join(__dirname, "../public/view"));
 app.set("view engine", "ejs");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, "../public")));
 app.get("/",async (req, res) => {
     try {
         const response = await axios.get(`${baseURL}/books`);
@@ -74,8 +75,8 @@ app.get("/delete/:id",async (req,res)=>{
     }
 });
 
-app.listen(5500, () => {
-    console.log('Server is running on http://localhost:5500');
+app.listen(5000, () => {
+    console.log('Server is running on http://localhost:5000');
 });
 
 
