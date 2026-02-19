@@ -1,82 +1,98 @@
 const express = require('express');
 const axios = require('axios');
-const app = express();
-var bodyParser = require('body-parser');
-
-const baseURL = 'http://localhost:3000';
 const path = require('path');
 
+const app = express();
+const baseURL = 'http://localhost:3000'; // API Server
 
-// Serve static files
+// View Engine
 app.set("views", path.join(__dirname, "../public/view"));
 app.set("view engine", "ejs");
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "../public")));
-app.get("/",async (req, res) => {
+
+// ===== ROUTES =====
+
+// Home - show all books
+app.get("/", async (req, res) => {
     try {
         const response = await axios.get(`${baseURL}/books`);
-        res.render("books",{books: response.data});
+        res.render("books", { books: response.data });
     } catch (error) {
-        res.status(500).send(error.message);
+        console.error(error.message);
+        res.status(500).send("Cannot connect to API Server");
     }
 });
 
-app.get("/books/:id",async (req,res)=>{
+// Book detail
+app.get("/books/:id", async (req, res) => {
     try {
         const response = await axios.get(`${baseURL}/books/${req.params.id}`);
-        res.render("book_detail",{book: response.data});
+        res.render("book_detail", { book: response.data });
     } catch (error) {
-        res.status(500).send(error.message);
+        res.status(500).send("Book not found");
     }
 });
 
-app.get("/create",(req,res)=>{
+// Create page
+app.get("/create", (req, res) => {
     res.render("create_book");
 });
 
-app.post("/create",async (req,res)=>{
+// Create action
+app.post("/create", async (req, res) => {
     try {
-        const data = {title: req.body.title, author: req.body.author};
-        await axios.post(`${baseURL}/books`,data);
+        const data = {
+            title: req.body.title,
+            author: req.body.author
+        };
+
+        await axios.post(`${baseURL}/books`, data);
         res.redirect("/");
     } catch (error) {
-        res.status(500).send(error.message);
+        res.status(500).send("Create failed");
     }
 });
 
-app.get("/update/:id",async (req,res)=>{
+// Update page
+app.get("/update/:id", async (req, res) => {
     try {
-        const response = await axios.get
-        (`${baseURL}/books/${req.params.id}`);
-        res.render("update_book",{book: response.data});
+        const response = await axios.get(`${baseURL}/books/${req.params.id}`);
+        res.render("update_book", { book: response.data });
     } catch (error) {
-        res.status(500).send(error.message);
-    }   
-});
-
-
-app.post("/update/:id",async (req,res)=>{
-    try {
-        const data = {title: req.body.title, author: req.body.author};
-        await axios.put(`${baseURL}/books/${req.params.id}`,data);
-        res.redirect("/");
-    } catch (error) {
-        res.status(500).send(error.message);
+        res.status(500).send("Cannot load book");
     }
 });
 
-app.get("/delete/:id",async (req,res)=>{
+// Update action
+app.post("/update/:id", async (req, res) => {
+    try {
+        const data = {
+            title: req.body.title,
+            author: req.body.author
+        };
+
+        await axios.put(`${baseURL}/books/${req.params.id}`, data);
+        res.redirect("/");
+    } catch (error) {
+        res.status(500).send("Update failed");
+    }
+});
+
+// Delete
+app.get("/delete/:id", async (req, res) => {
     try {
         await axios.delete(`${baseURL}/books/${req.params.id}`);
         res.redirect("/");
     } catch (error) {
-        res.status(500).send(error.message);
+        res.status(500).send("Delete failed");
     }
 });
 
+// Start server
 app.listen(5000, () => {
-    console.log('Server is running on http://localhost:5000');
+    console.log("🚀 View Server running at http://localhost:5000");
 });
-
-
